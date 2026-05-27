@@ -1,0 +1,73 @@
+[build-system]
+requires = ["setuptools>=77.0", "setuptools_scm[toml]>=7.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "LogNexs"
+dynamic = ["version"]   # version auto-generated from Git tag
+description = "LogNexs (re: Log Nexus): A Foundational Segmentation Tool for Drone Flight Log Messages"
+readme = "README.md"
+requires-python = ">=3.9"
+license = "MIT"
+license-files = ["LICENSE"]
+
+authors = [
+  { name="Swardiantara Silalahi", email="swardyantara@gmail.com" },
+]
+
+keywords = ["lognexs", "lognexus", "forensics", "drone", "logs", "nlp", "ner"]
+
+classifiers = [
+    "Environment :: Console",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Security",
+]
+
+dependencies = [
+    "simpletransformers>=0.70.0",
+    "pandas>=2.0.0",
+    "openpyxl>=3.0.0",
+    "tqdm>=4.60.0",
+    "torch>=2.0.0",
+    "transformers>=4.40.0",
+    "huggingface_hub>=0.31.0"
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=8.0",
+    "pandas>=2.0.0",
+    "openpyxl>=3.0.0",
+]
+dev = [
+    "build>=1.0",
+    "twine>=5.0",
+    "pytest>=8.0",
+    "pandas>=2.0.0",
+    "openpyxl>=3.0.0",
+]
+
+[project.scripts]
+lognexus = "lognexus.cli:main"
+lognexus-download = "lognexus.utils:download_model_cli"
+
+[project.urls]
+Homepage = "https://github.com/DroneNLP/LogNexus"
+Issues = "https://github.com/DroneNLP/LogNexus/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["lognexus*"]
+exclude = ["tests*"]
+
+[tool.setuptools_scm]
+fallback_version = "0.0.0"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

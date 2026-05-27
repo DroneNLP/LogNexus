@@ -1,0 +1,7 @@
+graft docs
+graft tests
+prune evidence
+prune model
+prune output
+prune .github
+global-exclude __pycache__ *.py[cod] .DS_Store Thumbs.db

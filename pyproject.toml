@@ -36,7 +36,9 @@ dependencies = [
     "tqdm>=4.60.0",
     "torch>=2.0.0",
     "transformers>=4.40.0",
-    "huggingface_hub>=0.31.0"
+    "huggingface_hub>=0.31.0",
+    "spacy>=3.7.0",
+    "nltk>=3.8.0"
 ]
 
 [project.optional-dependencies]
@@ -56,6 +58,7 @@ dev = [
 [project.scripts]
 lognexus = "lognexus.cli:main"
 lognexus-download = "lognexus.utils:download_model_cli"
+lognexus-pipeline = "lognexus.inference:main"
 
 [project.urls]
 Homepage = "https://github.com/DroneNLP/LogNexus"

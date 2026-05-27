@@ -13,6 +13,10 @@ exit codes on failures, CSV-only input documentation that matches the current
 implementation, and tests for tokenization, sentence reconstruction, CSV
 extraction, output writing, and CLI validation.
 
+The `refactor-sopid` branch adds a third public command, `lognexus-pipeline`,
+which ports the working SoPID inference pipeline into the LogNexus package
+structure. The original `lognexus` sentence extraction command is preserved.
+
 The PyPI distribution name is now `LogNexs`. This avoids the unrelated existing
 `lognexus` project on PyPI while keeping the internal import package and console
 commands compatible with the original LogNexus tool.
@@ -102,6 +106,28 @@ Impact:
   Hugging Face download dependency.
 - Model download still requires `huggingface_hub`, as before.
 
+### SoPID pipeline modules
+
+What changed:
+
+- Added `lognexus/inference.py` as the package-native SoPID inference pipeline.
+- Added `lognexus/preprocessing.py` for SoPID message normalization.
+- Added `lognexus/tokenization.py` for white-space, SpaCy, and NLTK
+  pretokenizers with character offsets.
+- Added `lognexus/decode.py` for IOB2/BIOES span decoding and group-aware
+  reconstruction.
+- Added `lognexus/problem_model.py` for loading the local DroPTC classifier.
+
+Impact:
+
+- `lognexus-pipeline --paradigm message` runs whole-message problem
+  identification with the SoPID sentiment model.
+- `lognexus-pipeline --paradigm segment` runs SoPID NER segmentation followed by
+  DroPTC segment classification.
+- The pipeline writes SoPID-style `unique_events.xlsx`, `timeline.json`,
+  `timing.json`, optional `prediction.json`, and `timing_summary.json` outputs
+  while staying inside the LogNexus package layout.
+
 ### `lognexus/__init__.py`
 
 What changed:
@@ -128,6 +154,8 @@ What changed:
 - Replaced nonstandard or risky classifiers with standard Trove classifiers.
 - Added optional `test` and `dev` dependency groups.
 - Added pytest configuration with `tests` as the test root.
+- Added `lognexus-pipeline` as a console script.
+- Added SpaCy and NLTK runtime dependencies for SoPID pretokenizers.
 
 Impact:
 
@@ -228,6 +256,7 @@ Preserved:
 - Import package name: `lognexus`.
 - CLI command: `lognexus`.
 - Model download command: `lognexus-download`.
+- Pipeline command: `lognexus-pipeline`.
 - Main CLI options: `--input_dir`, `--output_dir`, `--model_dir`, `--format`,
   and `--cuda`.
 - JSON and XLSX output formats.

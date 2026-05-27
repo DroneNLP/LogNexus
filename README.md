@@ -11,6 +11,7 @@ for downstream forensic review and analysis.
 - Extracts `APP.tip` and `APP.warning` messages into a message-level timeline.
 - Downloads the required Hugging Face model with `lognexus-download`.
 - Exports results as nested JSON or exploded XLSX rows.
+- Provides a SoPID-style forensic inference pipeline through `lognexus-pipeline`.
 - Supports optional CUDA inference when PyTorch detects an available GPU.
 
 ## Installation
@@ -75,6 +76,8 @@ message while preserving the original date and time values.
 
 ## Usage
 
+### Sentence Extraction
+
 Basic run:
 
 ```bash
@@ -109,6 +112,52 @@ lognexus --cuda
 ```
 
 If CUDA is requested but unavailable, LogNexs falls back to CPU.
+
+### SoPID-Style Inference Pipeline
+
+The `lognexus-pipeline` command ports the working inference pipeline from
+SoPID into the LogNexus package structure. It supports two paradigms:
+
+- `message`: classifies whole log messages using the Hugging Face sentiment
+  model `swardiantara/drone-sentiment`.
+- `segment`: segments messages with the SoPID NER model and classifies each
+  unique segment with a local DroPTC classifier.
+
+Recommended message-level run:
+
+```bash
+lognexus-pipeline --paradigm message --evidence-dir ./evidence --output-dir ./pipeline-output
+```
+
+Segment-level run:
+
+```bash
+lognexus-pipeline \
+  --paradigm segment \
+  --model-name swardiantara/SoPID-bert-base-cased \
+  --model-type bert \
+  --pretokenizer spacy \
+  --tag-scheme bioes \
+  --droptc-model-dir ./best-model/droptc \
+  --evidence-dir ./evidence \
+  --output-dir ./pipeline-output
+```
+
+Pipeline evidence can be flat (`evidence/*.csv`) or grouped by drone model
+(`evidence/{drone-model}/*.csv`). Outputs are written under:
+
+```text
+pipeline-output/{message|segment}-{before|after}/run-{n}/{drone-model}/{flight-log}/
+```
+
+Each processed log gets:
+
+- `unique_events.xlsx`: deduplicated messages or segments for manual review.
+- `timeline.json`: full forensic timeline with propagated labels.
+- `timing.json`: per-log timing.
+- `prediction.json`: segment CoNLL-style predictions, for segment runs only.
+
+The run folder also gets `timing_summary.json`.
 
 ## Output Formats
 
